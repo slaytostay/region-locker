@@ -28,7 +28,10 @@ import com.google.inject.Provides;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Scanner;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.Function;
 import javax.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Setter;
@@ -42,6 +45,7 @@ import net.runelite.api.events.FocusChanged;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatCommandManager;
 import net.runelite.client.chat.ChatMessageBuilder;
@@ -50,14 +54,20 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ChatInput;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.PluginChanged;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.plugins.gpu.GpuPlugin;
+import net.runelite.client.plugins.gpu.GpuPluginConfig;
+import net.runelite.client.plugins.gpu.GpuServiceImpl;
+import net.runelite.client.plugins.gpu.template.Template;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.LinkBrowser;
+import net.runelite.client.util.OSType;
 import net.runelite.client.util.Text;
 import static net.runelite.client.util.Text.sanitize;
 import net.runelite.http.api.chat.ChatClient;
@@ -96,6 +106,15 @@ public class RegionLockerPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
+	@Inject
+	private GpuPlugin gpuPlugin;
+
+	@Inject
+	private GpuServiceImpl gpuService;
+
+	@Inject
+	private ClientThread clientThread;
+
 	@Setter(AccessLevel.PACKAGE)
 	private boolean unlockKeyPressed = false;
 
@@ -108,6 +127,12 @@ public class RegionLockerPlugin extends Plugin
 	RegionLockerConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(RegionLockerConfig.class);
+	}
+
+	@Provides
+	GpuPluginConfig provideGpuConfig(ConfigManager configManager)
+	{
+		return configManager.getConfig(GpuPluginConfig.class);
 	}
 
 	@Override
@@ -186,5 +211,73 @@ public class RegionLockerPlugin extends Plugin
 	{
 		RegionLockerInput.UNLOCK_KEY = config.unlockKey();
 		RegionLockerInput.BLOCK_KEY = config.blacklistKey();
+	}
+
+	@Subscribe
+	public void onPluginChanged(PluginChanged pluginChanged)
+	{
+		System.out.println(pluginChanged.getPlugin());
+		if (pluginChanged.getPlugin().getClass().equals(gpuPlugin.getClass())) {
+			replaceProgram();
+		}
+	}
+
+	private void replaceProgram()
+	{
+		clientThread.invoke(() ->
+		{
+			try
+			{
+				final String glVersionHeader;
+
+				if (OSType.getOSType() == OSType.Linux)
+				{
+					glVersionHeader =
+							"#version 420\n" +
+									"#extension GL_ARB_compute_shader : require\n" +
+									"#extension GL_ARB_shader_storage_buffer_object : require\n";
+				} else
+				{
+					glVersionHeader = "#version 430\n";
+				}
+
+				Function<String, String> resourceLoader = (s) ->
+				{
+					if (s.endsWith(".glsl"))
+					{
+						System.out.println(getClass().getResource(s).getFile());
+						return inputStreamToString(getClass().getResourceAsStream(s));
+					}
+
+					if (s.equals("version_header"))
+					{
+						return glVersionHeader;
+					}
+
+					return "";
+				};
+
+				Template template = new Template(resourceLoader);
+				String source = template.process(resourceLoader.apply("geom.glsl"));
+
+				template = new Template(resourceLoader);
+				String vertSource = template.process(resourceLoader.apply("vert.glsl"));
+
+				template = new Template(resourceLoader);
+				String fragSource = template.process(resourceLoader.apply("frag.glsl"));
+				System.out.println(fragSource);
+
+				gpuService.replaceProgram(vertSource, source, fragSource);
+			}
+			catch (Throwable e)
+			{
+				System.out.println(e.getMessage());
+			}
+		});
+	}
+
+	private String inputStreamToString(InputStream in) {
+		Scanner scanner = (new Scanner(in)).useDelimiter("\\A");
+		return scanner.next();
 	}
 }

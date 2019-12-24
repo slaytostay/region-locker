@@ -9,7 +9,7 @@ public class RegionLockerPluginTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(RegionLockerPlugin.class, RegionGpuPlugin.class, GoalTrackerPlugin.class);
+		ExternalPluginManager.loadBuiltin(RegionLockerPlugin.class, GoalTrackerPlugin.class);
 		RuneLite.main(args);
 	}
 }
