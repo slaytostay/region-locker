@@ -117,7 +117,7 @@ public class RegionLockerGpuPlugin extends GpuPlugin
 			}
 			else if (s.endsWith(".glsl"))
 			{
-				return RegionLockerGpuPlugin.inputStreamToString(GpuPlugin.class.getResourceAsStream(s));
+				return inputStreamToString(GpuPlugin.class.getResourceAsStream(s));
 			}
 			else
 			{
