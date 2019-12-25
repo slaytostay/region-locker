@@ -1,7 +1,6 @@
 package com.regionlocker;
 
 import com.goaltracker.GoalTrackerPlugin;
-import com.gpu.RegionGpuPlugin;
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
