@@ -80,6 +80,5 @@ void main() {
   grayColor = mix(mixedColor.rgb, grayColor.rgb, configGrayAmount);
   grayColor = blendSoftLight(grayColor, configGrayColor.rgb, configGrayColor.a);
   vec3 finalColor = mix(mixedColor.rgb, grayColor.rgb, grayAmount);
-  //FragColor = vec4(finalColor, smoothColor.a);
-  FragColor = vec4(1, 0, 0, 1);
+  FragColor = vec4(finalColor, smoothColor.a);
 }
