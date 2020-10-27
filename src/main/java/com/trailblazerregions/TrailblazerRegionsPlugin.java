@@ -49,7 +49,6 @@ public class TrailblazerRegionsPlugin extends Plugin {
     protected void shutDown() throws Exception
     {
         RegionLocker._instance.resetRegions();
-        RegionLocker._instance.setRegions(StringToList(TrailblazerRegion.NONE.getRegions()), RegionTypes.UNLOCKED);
         RegionLocker._instance.setConfigRegions();
     }
 
@@ -76,7 +75,7 @@ public class TrailblazerRegionsPlugin extends Plugin {
     public void addRegions()
     {
         RegionLocker._instance.resetRegions();
-        //RegionLocker._instance.setRegions(StringToList(config.dropdownRegions().getRegions()), RegionTypes.UNLOCKED);
+        RegionLocker._instance.setRegions(StringToList(config.trailblazerRegion().getRegions()), RegionTypes.UNLOCKED);
         RegionLocker._instance.setConfigRegions();
     }
 }
