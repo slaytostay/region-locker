@@ -40,6 +40,8 @@ public class RegionLocker
 	private final RegionLockerConfig config;
 	private final ConfigManager configManager;
 
+	public static RegionLocker _instance;
+
 	@Getter
 	private static Map<String, RegionTypes> regions = new HashMap<>();
 
@@ -56,6 +58,8 @@ public class RegionLocker
 		this.config = config;
 		this.configManager = configManager;
 		readConfig();
+
+		_instance = this;
 	}
 
 	private List<String> StringToList(String s)
@@ -77,10 +81,17 @@ public class RegionLocker
 		grayAmount = config.shaderGrayAmount().getAlpha();
 		hardBorder = config.hardBorder();
 
+		resetRegions();
+		setConfigRegions();
+	}
+
+	public void resetRegions()
+	{
 		regions.clear();
+	}
 
-		setRegions(StringToList(config.dropdownRegions().getRegions()), RegionTypes.UNLOCKED);
-
+	public void setConfigRegions()
+	{
 		String unlockedString = config.unlockedRegions();
 		List<String> unlockedRegions = StringToList(unlockedString);
 		setRegions(unlockedRegions, RegionTypes.UNLOCKED);
@@ -94,7 +105,7 @@ public class RegionLocker
 		setRegions(blacklistedRegions, RegionTypes.BLACKLISTED);
 	}
 
-	private void setRegions(List<String> regs, RegionTypes type)
+	public void setRegions(List<String> regs, RegionTypes type)
 	{
 		for (String id : regs)
 		{
