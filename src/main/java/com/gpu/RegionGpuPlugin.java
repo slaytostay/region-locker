@@ -147,6 +147,7 @@ public class RegionGpuPlugin extends Plugin implements DrawCallbacks {
 
 	static final Shader PROGRAM = new Shader()
 			.add(GL43C.GL_VERTEX_SHADER, "vert.glsl")
+			.add(GL43C.GL_GEOMETRY_SHADER, "geom.glsl")
 			.add(GL43C.GL_FRAGMENT_SHADER, "frag.glsl");
 
 	static final Shader COMPUTE_PROGRAM = new Shader()
