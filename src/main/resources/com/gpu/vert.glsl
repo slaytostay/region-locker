@@ -65,14 +65,13 @@ uniform int baseX;
 uniform int baseY;
 uniform int lockedRegions[LOCKED_REGIONS_SIZE];
 
-out float vGrayAmount;
-
 out ivec3 vPosition;
 out vec4 vColor;
 out float vHsl;
 out int vTextureId;
 out vec2 vUv;
 out float vFogAmount;
+out float vGrayAmount;
 
 #include hsl_to_rgb.glsl
 

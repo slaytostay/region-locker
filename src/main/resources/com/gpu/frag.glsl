@@ -25,14 +25,14 @@
 #version 330
 
 uniform sampler2DArray textures;
-uniform vec2 textureOffsets[64];
 uniform float brightness;
 uniform float smoothBanding;
 uniform vec4 fogColor;
-uniform vec4 configGrayColor;
-uniform float configGrayAmount;
 uniform int colorBlindMode;
 uniform float textureLightMode;
+
+uniform vec4 configGrayColor;
+uniform float configGrayAmount;
 
 in vec4 Color;
 noperspective centroid in float fHsl;

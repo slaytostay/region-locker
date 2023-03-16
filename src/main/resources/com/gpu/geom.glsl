@@ -33,18 +33,6 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-layout(std140) uniform uniforms {
-  int cameraYaw;
-  int cameraPitch;
-  int centerX;
-  int centerY;
-  int zoom;
-  int cameraX;
-  int cameraY;
-  int cameraZ;
-  ivec2 sinCosTable[2048];
-};
-
 uniform mat4 projectionMatrix;
 uniform int useGray;
 uniform int useHardBorder;
@@ -62,12 +50,10 @@ in float vGrayAmount[];
 
 out vec4 Color;
 noperspective centroid out float fHsl;
+flat out int textureId;
 out vec2 fUv;
 out float fogAmount;
-flat out int textureId;
 out float grayAmount;
-
-#include to_screen.glsl
 
 int toRegionId(int x, int y) {
   return (x >> 13 << 8) + (y >> 13);
