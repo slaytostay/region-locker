@@ -98,6 +98,8 @@ class OpenCLManager
 	//  };
 	private static final int SHARED_SIZE = 12 + 12 + 18 + 1; // in ints
 
+	private boolean initialized;
+
 	// The number of faces each worker processes in the two kernels
 	private int largeFaceCount;
 	private int smallFaceCount;
@@ -121,6 +123,9 @@ class OpenCLManager
 
 	void init(AWTContext awtContext)
 	{
+		CL.create();
+		initialized = true;
+
 		try (var stack = MemoryStack.stackPush())
 		{
 			initContext(awtContext, stack);
@@ -132,6 +137,11 @@ class OpenCLManager
 
 	void cleanup()
 	{
+		if (!initialized)
+		{
+			return;
+		}
+
 		CL12.clReleaseKernel(kernelUnordered);
 		CL12.clReleaseKernel(kernelSmall);
 		CL12.clReleaseKernel(kernelLarge);
@@ -147,12 +157,11 @@ class OpenCLManager
 		CL12.clReleaseDevice(device);
 
 		CL.destroy();
+		initialized = false;
 	}
 
 	private void initContext(AWTContext awtContext, MemoryStack stack)
 	{
-		CL.create();
-
 		IntBuffer pi = stack.mallocInt(1);
 		checkCLError(clGetPlatformIDs(null, pi));
 		if (pi.get(0) == 0)

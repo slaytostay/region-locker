@@ -456,10 +456,10 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 				shutdownVao();
 				shutdownBuffers();
 				shutdownAAFbo();
-
-				// this must shutdown after the clgl buffers are freed
-				openCLManager.cleanup();
 			}
+
+			// this must shutdown after the clgl buffers are freed
+			openCLManager.cleanup();
 
 			if (awtContext != null)
 			{
