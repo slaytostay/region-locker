@@ -24,7 +24,6 @@
  */
 package com.gpu;
 
-import com.google.common.base.Charsets;
 import com.gpu.template.Template;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
