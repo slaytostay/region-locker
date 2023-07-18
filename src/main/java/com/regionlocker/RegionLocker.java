@@ -44,8 +44,7 @@ public class RegionLocker
 	public static int grayAmount;
 	public static boolean hardBorder;
 	public static boolean invertShader;
-	private static boolean unlockReamls;
-	private static boolean unlockUnderground;
+	private static boolean unlockNonMainlandChunks;
 	private static TrailblazerRegion trailblazerRegion = TrailblazerRegion.NONE;
 
 	RegionLocker(RegionLockerConfig config, ConfigManager configManager)
@@ -68,8 +67,7 @@ public class RegionLocker
 	public void readConfig()
 	{
 		renderLockedRegions = config.renderLockedRegions();
-		unlockReamls = config.unlockRealms();
-		unlockUnderground = config.unlockUnderground();
+		unlockNonMainlandChunks = config.unlockNonMainlandChunks();
 		grayColor = config.shaderGrayColor();
 		grayAmount = config.shaderGrayAmount().getAlpha();
 		hardBorder = config.hardBorder();
@@ -105,11 +103,10 @@ public class RegionLocker
 		List<String> unlockableRegions = new ArrayList<>();
 		List<String> blacklistedRegions = new ArrayList<>();
 
-		regions.entrySet().forEach(e ->
-		{
-			if (e.getValue() == RegionTypes.UNLOCKED) unlockedRegions.add(e.getKey());
-			if (e.getValue() == RegionTypes.UNLOCKABLE) unlockableRegions.add(e.getKey());
-			if (e.getValue() == RegionTypes.BLACKLISTED) blacklistedRegions.add(e.getKey());
+		regions.forEach((key, value) -> {
+			if (value == RegionTypes.UNLOCKED) unlockedRegions.add(key);
+			if (value == RegionTypes.UNLOCKABLE) unlockableRegions.add(key);
+			if (value == RegionTypes.BLACKLISTED) blacklistedRegions.add(key);
 		});
 
 		String csv = Text.toCSV(unlockedRegions);
@@ -155,9 +152,7 @@ public class RegionLocker
 				return RegionTypes.UNLOCKED;
 		}
 		int y = getY(regionId);
-		if (unlockReamls && y >= 4160 && y < 5952) return RegionTypes.UNLOCKED;
-		if (unlockUnderground && y >= 8960) return RegionTypes.UNLOCKED;
-		if (regions == null) return null;
+		if (unlockNonMainlandChunks && (y < 2496 || y >= 4160)) return RegionTypes.UNLOCKED;
 		return regions.get(id);
 	}
 

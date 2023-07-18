@@ -69,23 +69,11 @@ public interface RegionLockerConfig extends Config
 	@ConfigItem(
 			keyName = "unlockUnderground",
 			name = "Unlock underground",
-			description = "Unlock all underground chunks",
+			description = "Unlock all underground chunks (and any non-mainland chunks)",
 			position = 16,
 			section = regionSettings
 	)
-	default boolean unlockUnderground()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-			keyName = "unlockRealms",
-			name = "Unlock realms",
-			description = "Unlock all realm chunks like Zanaris and the TzHaar area",
-			position = 17,
-			section = regionSettings
-	)
-	default boolean unlockRealms()
+	default boolean unlockNonMainlandChunks()
 	{
 		return true;
 	}
