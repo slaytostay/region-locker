@@ -1769,12 +1769,6 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 		}
 	}
 
-	@Override
-	public boolean drawFace(Model model, int face)
-	{
-		return false;
-	}
-
 	/**
 	 * returns the correct buffer based on triangle count and updates model count
 	 *
