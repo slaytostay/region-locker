@@ -48,7 +48,7 @@ public interface GpuPluginConfig extends Config
 	)
 	default int drawDistance()
 	{
-		return 25;
+		return 50;
 	}
 
 	@ConfigItem(
@@ -59,7 +59,7 @@ public interface GpuPluginConfig extends Config
 	)
 	default boolean smoothBanding()
 	{
-		return false;
+		return true;
 	}
 
 	@ConfigItem(
@@ -70,7 +70,7 @@ public interface GpuPluginConfig extends Config
 	)
 	default AntiAliasingMode antiAliasingMode()
 	{
-		return AntiAliasingMode.DISABLED;
+		return AntiAliasingMode.MSAA_2;
 	}
 
 	@ConfigItem(
@@ -122,7 +122,7 @@ public interface GpuPluginConfig extends Config
 	)
 	default int anisotropicFilteringLevel()
 	{
-		return 0;
+		return 1;
 	}
 
 	@ConfigItem(
