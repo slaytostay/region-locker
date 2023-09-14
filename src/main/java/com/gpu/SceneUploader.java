@@ -44,12 +44,12 @@ import net.runelite.api.SceneTilePaint;
 import net.runelite.api.Tile;
 import net.runelite.api.WallObject;
 
+import static com.gpu.RegionLockerGpuPlugin.SCENE_OFFSET;
+
 @Singleton
 @Slf4j
 class SceneUploader
 {
-	private static final int SCENE_OFFSET = (Constants.EXTENDED_SCENE_SIZE - Constants.SCENE_SIZE) / 2; // offset for sxy -> msxy
-
 	@Inject
 	private Client client;
 
