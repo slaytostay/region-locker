@@ -101,6 +101,7 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 	static final int MAX_DISTANCE = 184;
 	static final int MAX_FOG_DEPTH = 100;
 	static final int SCENE_OFFSET = (Constants.EXTENDED_SCENE_SIZE - Constants.SCENE_SIZE) / 2; // offset for sxy -> msxy
+	private static final int GROUND_MIN_Y = 350; // how far below the ground models extend
 
 	@Inject
 	private Client client;
@@ -1618,7 +1619,7 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 		int y = Math.max(
 			Math.max(tileHeights[plane][msx][msy], tileHeights[plane][msx][msy + 1]),
 			Math.max(tileHeights[plane][msx + 1][msy], tileHeights[plane][msx + 1][msy + 1])
-		) - cameraY;
+		) + GROUND_MIN_Y - cameraY;
 
 		int radius = 96; // ~ 64 * sqrt(2)
 
