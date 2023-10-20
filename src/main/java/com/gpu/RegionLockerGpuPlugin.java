@@ -889,14 +889,14 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 		vertexBuffer.ensureCapacity(32);
 		IntBuffer uniformBuf = vertexBuffer.getBuffer();
 		uniformBuf
-			.put(yaw)
-			.put(pitch)
+			.put(Float.floatToIntBits((float) cameraYaw))
+			.put(Float.floatToIntBits((float) cameraPitch))
 			.put(client.getCenterX())
 			.put(client.getCenterY())
 			.put(client.getScale())
-			.put(cameraX)
-			.put(cameraY)
-			.put(cameraZ);
+			.put(Float.floatToIntBits((float) cameraX))
+			.put(Float.floatToIntBits((float) cameraY))
+			.put(Float.floatToIntBits((float) cameraZ));
 		uniformBuf.flip();
 
 		GL43C.glBindBuffer(GL43C.GL_UNIFORM_BUFFER, uniformBuffer.glBufferId);
