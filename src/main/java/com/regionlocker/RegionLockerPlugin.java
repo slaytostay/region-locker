@@ -32,8 +32,8 @@ import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.events.FocusChanged;
 import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -138,7 +138,7 @@ public class RegionLockerPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
-		Widget map = client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
+		Widget map = client.getWidget(ComponentID.WORLD_MAP_MAPVIEW);
 		if (!(unlockKeyPressed || blockKeyPressed) || hoveredRegion == -1 || map == null) return;
 
 		if (unlockKeyPressed) regionLocker.addRegion(hoveredRegion);

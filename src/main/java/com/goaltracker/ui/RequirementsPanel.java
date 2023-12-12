@@ -46,7 +46,7 @@ public class RequirementsPanel extends JPanel
 	private final JComponent parentPanel;
 	private final Goal goal;
 
-	private boolean expanded = true;
+	private boolean expanded;
 	private boolean hovering = false;
 
 	private GridBagConstraints gbc;
