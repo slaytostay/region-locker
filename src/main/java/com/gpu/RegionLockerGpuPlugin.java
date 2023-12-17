@@ -1081,8 +1081,7 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 		if (computeMode == ComputeMode.NONE)
 		{
 			targetBufferOffset += sceneUploader.upload(model,
-				tileX, tileY,
-				tileX << Perspective.LOCAL_COORD_BITS, tileY << Perspective.LOCAL_COORD_BITS,
+				0, 0,
 				vertexBuffer, uvBuffer,
 				true);
 		}
