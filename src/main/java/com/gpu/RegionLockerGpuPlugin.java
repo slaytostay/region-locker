@@ -247,8 +247,9 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 	private AntiAliasingMode lastAntiAliasingMode;
 	private int lastAnisotropicFilteringLevel = -1;
 
-	private int yaw;
-	private int pitch;
+	private double cameraX, cameraY, cameraZ;
+	private double cameraYaw, cameraPitch;
+
 	private int viewportOffsetX;
 	private int viewportOffsetY;
 
@@ -867,10 +868,13 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 	}
 
 	@Override
-	public void drawScene(int cameraX, int cameraY, int cameraZ, int cameraPitch, int cameraYaw, int plane)
+	public void drawScene(double cameraX, double cameraY, double cameraZ, double cameraPitch, double cameraYaw, int plane)
 	{
-		yaw = client.getCameraYaw();
-		pitch = client.getCameraPitch();
+		this.cameraX = cameraX;
+		this.cameraY = cameraY;
+		this.cameraZ = cameraZ;
+		this.cameraPitch = cameraPitch;
+		this.cameraYaw = cameraYaw;
 		viewportOffsetX = client.getViewportXOffset();
 		viewportOffsetY = client.getViewportYOffset();
 
@@ -1283,9 +1287,9 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 			// Calculate projection matrix
 			float[] projectionMatrix = Mat4.scale(client.getScale(), client.getScale(), 1);
 			Mat4.mul(projectionMatrix, Mat4.projection(viewportWidth, viewportHeight, 50));
-			Mat4.mul(projectionMatrix, Mat4.rotateX((float) -(Math.PI - pitch * Perspective.UNIT)));
-			Mat4.mul(projectionMatrix, Mat4.rotateY((float) (yaw * Perspective.UNIT)));
-			Mat4.mul(projectionMatrix, Mat4.translate(-client.getCameraX2(), -client.getCameraY2(), -client.getCameraZ2()));
+			Mat4.mul(projectionMatrix, Mat4.rotateX((float) -(Math.PI - cameraPitch)));
+			Mat4.mul(projectionMatrix, Mat4.rotateY((float) cameraYaw));
+			Mat4.mul(projectionMatrix, Mat4.translate((float) -cameraX, (float) -cameraY, (float) -cameraZ));
 			GL43C.glUniformMatrix4fv(uniProjectionMatrix, false, projectionMatrix);
 
 			// Bind uniforms
