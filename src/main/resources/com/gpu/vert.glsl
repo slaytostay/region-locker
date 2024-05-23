@@ -98,5 +98,5 @@ void main() {
 
   gFogAmount = fogFactorLinear(fogDistance, 0, fogDepth * TILE_SIZE) * useFog;
 
-  regionLockerVert(vertex);
+  regionLockerVert(vert);
 }

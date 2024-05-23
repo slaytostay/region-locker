@@ -31,8 +31,8 @@ float isLocked(int x, int y) {
 }
 
 void regionLockerGeomVertex(int i) {
-  ivec3 center = (gVertex[0] + gVertex[1] + gVertex[2]) / 3;
-  float locked = useGray * isLocked(center.x, center.z);
+  vec3 center = (gVertex[0] + gVertex[1] + gVertex[2]) / 3;
+  float locked = useGray * isLocked(int(center.x), int(center.z));
 
   grayAmount = useHardBorder * locked + (1 - useHardBorder) * vGrayAmount[i];
 }

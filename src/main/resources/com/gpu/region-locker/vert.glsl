@@ -29,6 +29,6 @@ float isLocked(int x, int y) {
   return b_convert(result);
 }
 
-void regionLockerVert(ivec3 vertex) {
+void regionLockerVert(vec3 vertex) {
   vGrayAmount = useGray * isLocked(int(vertex.x), int(vertex.z));
 }
