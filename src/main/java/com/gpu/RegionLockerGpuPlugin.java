@@ -254,6 +254,8 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 
 	private int viewportOffsetX;
 	private int viewportOffsetY;
+	private int viewportWidth;
+	private int viewportHeight;
 
 	// Uniforms
 	private int uniColorBlindMode;
@@ -891,6 +893,8 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 		this.cameraYaw = cameraYaw;
 		viewportOffsetX = client.getViewportXOffset();
 		viewportOffsetY = client.getViewportYOffset();
+		viewportWidth = client.getViewportWidth();
+		viewportHeight = client.getViewportHeight();
 
 		final Scene scene = client.getScene();
 		scene.setDrawDistance(getDrawDistance());
@@ -1159,9 +1163,6 @@ public class RegionLockerGpuPlugin extends Plugin implements DrawCallbacks
 
 		final int canvasHeight = client.getCanvasHeight();
 		final int canvasWidth = client.getCanvasWidth();
-
-		final int viewportHeight = client.getViewportHeight();
-		final int viewportWidth = client.getViewportWidth();
 
 		prepareInterfaceTexture(canvasWidth, canvasHeight);
 
