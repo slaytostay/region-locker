@@ -64,8 +64,7 @@ import java.util.stream.Stream;
 @PluginDescriptor(
 		name = "Region Goal Tracker",
 		description = "Add goals to chunks",
-		tags = {"chunk", "backlog", "log"},
-		enabledByDefault = false
+		tags = {"chunk", "backlog", "log"}
 )
 public class GoalTrackerPlugin extends Plugin
 {

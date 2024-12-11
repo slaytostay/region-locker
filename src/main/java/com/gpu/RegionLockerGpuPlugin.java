@@ -87,7 +87,6 @@ import org.lwjgl.system.Configuration;
 @PluginDescriptor(
 	name = "Region Locker GPU",
 	description = "GPU plugin with unique shader for locked chunks",
-	enabledByDefault = false,
 	tags = {"fog", "draw distance", "chunk", "locker"},
 	conflicts = "GPU",
 	loadInSafeMode = false,
