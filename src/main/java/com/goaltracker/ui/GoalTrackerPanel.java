@@ -24,34 +24,15 @@
  */
 package com.goaltracker.ui;
 
+import com.goaltracker.Goal;
 import com.goaltracker.GoalTrackerConfig;
+import com.goaltracker.GoalTrackerPlugin;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
-
-import java.awt.Component;
-import java.awt.Cursor;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JLayeredPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import lombok.Getter;
-import com.goaltracker.Goal;
-import com.goaltracker.GoalTrackerPlugin;
-import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.ui.ColorScheme;
-import net.runelite.client.ui.PluginPanel;
-import net.runelite.client.ui.components.DragAndDropReorderPane;
-import net.runelite.client.ui.components.IconTextField;
-import net.runelite.client.util.ImageUtil;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -67,6 +48,23 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.ui.PluginPanel;
+import net.runelite.client.ui.components.DragAndDropReorderPane;
+import net.runelite.client.ui.components.IconTextField;
+import net.runelite.client.util.ImageUtil;
 
 @Slf4j
 public class GoalTrackerPanel extends PluginPanel
@@ -123,23 +121,23 @@ public class GoalTrackerPanel extends PluginPanel
 
 	static
 	{
-		final BufferedImage addIcon = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "add_icon.png");
+		final BufferedImage addIcon = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "add_icon.png");
 		ADD_ICON = new ImageIcon(addIcon);
 		ADD_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(addIcon, 0.53f));
 
-		final BufferedImage importIcon = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "import.png");
+		final BufferedImage importIcon = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "import.png");
 		IMPORT_ICON = new ImageIcon(importIcon);
 		IMPORT_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(importIcon, 0.53f));
 
-		final BufferedImage exportIcon = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "export.png");
+		final BufferedImage exportIcon = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "export.png");
 		EXPORT_ICON = new ImageIcon(exportIcon);
 		EXPORT_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(exportIcon, 0.53f));
 
-		final BufferedImage deleteImg = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "delete_icon.png");
+		final BufferedImage deleteImg = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "delete_icon.png");
 		DELETE_ICON = new ImageIcon(deleteImg);
 		DELETE_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(deleteImg, -100));
 
-		final BufferedImage editImg = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "edit_icon.png");
+		final BufferedImage editImg = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "edit_icon.png");
 		EDIT_ICON = new ImageIcon(editImg);
 		EDIT_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(editImg, -100));
 	}
@@ -216,7 +214,7 @@ public class GoalTrackerPanel extends PluginPanel
 
 				File file = fc.getSelectedFile();
 
-				if (plugin.getGoals().size() > 0)
+				if (!plugin.getGoals().isEmpty())
 				{
 					int confirm = JOptionPane.showConfirmDialog(GoalTrackerPanel.this,
 							"Are you sure you want to import this file? This will DELETE all your current goals.",
@@ -233,7 +231,8 @@ public class GoalTrackerPanel extends PluginPanel
 					StringBuilder json = new StringBuilder();
 					while (line != null)
 					{
-						json.append(line + System.lineSeparator());
+						json.append(line)
+							.append(System.lineSeparator());
 						line = in.readLine();
 					}
 					plugin.getGoals().clear();
@@ -348,19 +347,19 @@ public class GoalTrackerPanel extends PluginPanel
 	private void loadIcons()
 	{
 		final BufferedImage checkedImg = ImageUtil.recolorImage(
-			ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "checked_icon.png"),
+			ImageUtil.loadImageResource(GoalTrackerPlugin.class, "checked_icon.png"),
 			config.completedColor());
 		CHECKED_ICON = new ImageIcon(checkedImg);
 		CHECKED_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(checkedImg, -100));
 
 		final BufferedImage checkboxImg = ImageUtil.recolorImage(
-			ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "checkbox_icon.png"),
+			ImageUtil.loadImageResource(GoalTrackerPlugin.class, "checkbox_icon.png"),
 			config.inProgressColor());
 		CHECKBOX_ICON = new ImageIcon(checkboxImg);
 		CHECKBOX_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(checkboxImg, -100));
 
 		final BufferedImage blockedImg = ImageUtil.recolorImage(
-			ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "blocked_icon.png"),
+			ImageUtil.loadImageResource(GoalTrackerPlugin.class, "blocked_icon.png"),
 			config.blockedColor());
 		BLOCKED_ICON = new ImageIcon(blockedImg);
 		BLOCKED_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(blockedImg, -100));

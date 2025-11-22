@@ -3,27 +3,26 @@ package com.goaltracker.ui;
 import com.goaltracker.Goal;
 import com.goaltracker.GoalTrackerPlugin;
 import com.goaltracker.Requirement;
-import java.awt.Cursor;
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
-import net.runelite.client.ui.ColorScheme;
-import net.runelite.client.ui.components.MouseDragEventForwarder;
-import net.runelite.client.util.ImageUtil;
-
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import net.runelite.client.ui.ColorScheme;
+import net.runelite.client.ui.components.MouseDragEventForwarder;
+import net.runelite.client.util.ImageUtil;
 
 public class RequirementsPanel extends JPanel
 {
@@ -37,10 +36,10 @@ public class RequirementsPanel extends JPanel
 	private static final ImageIcon DELETE_ICON;
 	private static final ImageIcon DELETE_HOVER_ICON;
 
-	private JLabel expandButton;
-	private JPanel bottomContainer;
-	private JPanel addButtonWrapper;
-	private JPanel nameWrapper;
+	private final JLabel expandButton;
+	private final JPanel bottomContainer;
+	private final JPanel addButtonWrapper;
+	private final JPanel nameWrapper;
 
 	private final GoalTrackerPlugin plugin;
 	private final JComponent parentPanel;
@@ -49,23 +48,21 @@ public class RequirementsPanel extends JPanel
 	private boolean expanded;
 	private boolean hovering = false;
 
-	private GridBagConstraints gbc;
-
 	static
 	{
-		final BufferedImage addIcon = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "add_icon.png");
+		final BufferedImage addIcon = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "add_icon.png");
 		ADD_ICON = new ImageIcon(addIcon);
 		ADD_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(addIcon, 0.53f));
 
-		final BufferedImage expandMoreImg = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "expand_more_icon.png");
+		final BufferedImage expandMoreImg = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "expand_more_icon.png");
 		EXPAND_MORE_ICON = new ImageIcon(expandMoreImg);
 		EXPAND_MORE_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(expandMoreImg, -100));
 
-		final BufferedImage expandLessImg = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "expand_less_icon.png");
+		final BufferedImage expandLessImg = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "expand_less_icon.png");
 		EXPAND_LESS_ICON = new ImageIcon(expandLessImg);
 		EXPAND_LESS_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(expandLessImg, -100));
 
-		final BufferedImage deleteImg = ImageUtil.getResourceStreamFromClass(GoalTrackerPlugin.class, "delete_icon.png");
+		final BufferedImage deleteImg = ImageUtil.loadImageResource(GoalTrackerPlugin.class, "delete_icon.png");
 		DELETE_ICON = new ImageIcon(deleteImg);
 		DELETE_HOVER_ICON = new ImageIcon(ImageUtil.alphaOffset(deleteImg, -100));
 	}
@@ -261,7 +258,7 @@ public class RequirementsPanel extends JPanel
 	{
 		bottomContainer.removeAll();
 
-		gbc = new GridBagConstraints();
+		var gbc = new GridBagConstraints();
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 1;
 		gbc.gridx = 0;

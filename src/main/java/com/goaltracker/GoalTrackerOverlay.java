@@ -26,6 +26,7 @@
 package com.goaltracker;
 
 import com.google.inject.Inject;
+import com.regionlocker.RegionLocker;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -33,14 +34,12 @@ import java.awt.Rectangle;
 import java.util.Arrays;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
-import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import com.regionlocker.RegionLocker;
 import net.runelite.api.worldmap.WorldMap;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
 import net.runelite.client.ui.overlay.tooltip.Tooltip;
 import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 import net.runelite.client.util.ColorUtil;
@@ -67,7 +66,7 @@ public class GoalTrackerOverlay extends Overlay
 	private GoalTrackerOverlay()
 	{
 		setPosition(OverlayPosition.DYNAMIC);
-		setPriority(OverlayPriority.HIGHEST);
+		setPriority(Overlay.PRIORITY_HIGHEST);
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 	}
 
@@ -82,7 +81,7 @@ public class GoalTrackerOverlay extends Overlay
 
 	private void drawRegionOverlay(Graphics2D graphics)
 	{
-		Widget map = client.getWidget(ComponentID.WORLD_MAP_MAPVIEW);
+		Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 
 		if (map == null) return;
 
@@ -213,7 +212,7 @@ public class GoalTrackerOverlay extends Overlay
 				color = config.inProgressColor();
 			}
 
-			sb.append(ColorUtil.wrapWithColorTag(goal.getName(), color) + "</br>");
+			sb.append(ColorUtil.wrapWithColorTag(goal.getName(), color)).append("</br>");
 		}
 		if (!sb.toString().isEmpty()) sb.insert(0, title);
 		return sb;

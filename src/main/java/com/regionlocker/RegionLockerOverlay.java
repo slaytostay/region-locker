@@ -34,13 +34,12 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import net.runelite.api.Client;
 import net.runelite.api.Point;
-import net.runelite.api.widgets.ComponentID;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.worldmap.WorldMap;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.ui.overlay.OverlayPriority;
 
 class RegionLockerOverlay extends Overlay
 {
@@ -58,7 +57,7 @@ class RegionLockerOverlay extends Overlay
 	private RegionLockerOverlay(Client client, RegionLockerPlugin regionLockerPlugin, RegionLockerConfig config)
 	{
 		setPosition(OverlayPosition.DYNAMIC);
-		setPriority(OverlayPriority.HIGHEST);
+		setPriority(Overlay.PRIORITY_HIGHEST);
 		setLayer(OverlayLayer.ALWAYS_ON_TOP);
 		this.client = client;
 		this.regionLockerPlugin = regionLockerPlugin;
@@ -75,7 +74,7 @@ class RegionLockerOverlay extends Overlay
 
 	private void drawRegionOverlay(Graphics2D graphics)
 	{
-		Widget map = client.getWidget(ComponentID.WORLD_MAP_MAPVIEW);
+		Widget map = client.getWidget(InterfaceID.Worldmap.MAP_CONTAINER);
 
 		if (map == null) return;
 

@@ -85,7 +85,7 @@ public class Regions
 				end = m.end();
 
 				String expr = m.group("expr");
-				if (expr == null || expr.length() <= 0 || expr.startsWith("//"))
+				if (expr == null || expr.isEmpty() || expr.startsWith("//"))
 				{
 					continue;
 				}
@@ -196,7 +196,7 @@ public class Regions
 		int idx = id / 8;
 		if (idx < regionMap.length)
 		{
-			regionMap[idx] |= 1 << (idx % 8);
+			regionMap[idx] |= (byte) (1 << (idx % 8));
 		}
 	}
 

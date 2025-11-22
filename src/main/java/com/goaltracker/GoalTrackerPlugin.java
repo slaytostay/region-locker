@@ -24,20 +24,17 @@
  */
 package com.goaltracker;
 
-import static com.goaltracker.GoalTrackerConfig.BLOCKED_COLOR_KEY;
-import static com.goaltracker.GoalTrackerConfig.COLLAPSE_REQUIREMENTS_KEY;
-import static com.goaltracker.GoalTrackerConfig.COMPLETED_COLOR_KEY;
-import static com.goaltracker.GoalTrackerConfig.CONFIG_GROUP;
-import static com.goaltracker.GoalTrackerConfig.HIDE_COMPLETED_GOALS_KEY;
-import static com.goaltracker.GoalTrackerConfig.IN_PROGRESS_COLOR_KEY;
-import static com.goaltracker.GoalTrackerConfig.OLD_CONFIG_GROUP;
-import static com.goaltracker.GoalTrackerConfig.REQUIRED_CHUNK_COLOR_KEY;
+import com.goaltracker.ui.GoalTrackerPanel;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -48,17 +45,20 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import com.goaltracker.ui.GoalTrackerPanel;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.ClientUI;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.ImageUtil;
 
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
+import static com.goaltracker.GoalTrackerConfig.BLOCKED_COLOR_KEY;
+import static com.goaltracker.GoalTrackerConfig.COLLAPSE_REQUIREMENTS_KEY;
+import static com.goaltracker.GoalTrackerConfig.COMPLETED_COLOR_KEY;
+import static com.goaltracker.GoalTrackerConfig.CONFIG_GROUP;
+import static com.goaltracker.GoalTrackerConfig.HIDE_COMPLETED_GOALS_KEY;
+import static com.goaltracker.GoalTrackerConfig.IN_PROGRESS_COLOR_KEY;
+import static com.goaltracker.GoalTrackerConfig.OLD_CONFIG_GROUP;
+import static com.goaltracker.GoalTrackerConfig.REQUIRED_CHUNK_COLOR_KEY;
 
 @Slf4j
 @PluginDescriptor(
@@ -158,7 +158,7 @@ public class GoalTrackerPlugin extends Plugin
 		pluginPanel = injector.getInstance(GoalTrackerPanel.class);
 		pluginPanel.rebuild();
 
-		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(getClass(), ICON_FILE);
+		final BufferedImage icon = ImageUtil.loadImageResource(getClass(), ICON_FILE);
 
 		navigationButton = NavigationButton.builder()
 				.tooltip(PLUGIN_NAME)

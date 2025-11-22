@@ -25,8 +25,11 @@
 package com.regionlocker;
 
 import java.awt.Color;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.util.Text;
@@ -147,7 +150,8 @@ public class RegionLocker
 	public static RegionTypes getType(int regionId)
 	{
 		String id = Integer.toString(regionId);
-		if (!id.equals("") && trailblazerRegion != null && trailblazerRegion != TrailblazerRegion.NONE && trailblazerRegion.regions != null) {
+		if (trailblazerRegion != null && trailblazerRegion != TrailblazerRegion.NONE && trailblazerRegion.regions != null)
+		{
 			if (Arrays.asList(trailblazerRegion.regions).contains(id))
 				return RegionTypes.UNLOCKED;
 		}
