@@ -155,8 +155,19 @@ public class RegionLocker
 			if (Arrays.asList(trailblazerRegion.regions).contains(id))
 				return RegionTypes.UNLOCKED;
 		}
-		int y = getY(regionId);
-		if (unlockNonMainlandChunks && (y < 2496 || y >= 4160)) return RegionTypes.UNLOCKED;
+		final int minMainlandRegionId = 3872;
+		final int maxMainlandRegionId = 15937;
+		final int minX = minMainlandRegionId >> 8;
+		final int minY = minMainlandRegionId & 0xFF;
+		final int maxX = maxMainlandRegionId >> 8;
+		final int maxY = maxMainlandRegionId & 0xFF;
+		int regionX = regionId >> 8;
+		int regionY = regionId & 0xFF;
+		boolean isMainland = minX <= regionX && regionX <= maxX && minY <= regionY && regionY <= maxY;
+		if (unlockNonMainlandChunks && !isMainland)
+		{
+			return RegionTypes.UNLOCKED;
+		}
 		return regions.get(id);
 	}
 
