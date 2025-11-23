@@ -3,17 +3,24 @@ package com.gpu;
 import com.regionlocker.RegionLocker;
 import java.util.Arrays;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
-import org.lwjgl.opengl.GL43C;
 
+import static org.lwjgl.opengl.GL33C.*;
+
+@Slf4j
 public class RegionLockerAddon
 {
 	@Inject
 	private Client client;
 
 	private static final int LOCKED_REGIONS_SIZE = 16;
-	private final int[] loadedLockedRegions = new int[LOCKED_REGIONS_SIZE];	private int uniUseGray;
+	private final int[] loadedLockedRegions = new int[LOCKED_REGIONS_SIZE];
+
+	private boolean isValid;
+	private int glProgram;
+	private int uniUseGray;
 	private int uniUseHardBorder;
 	private int uniGrayAmount;
 	private int uniGrayColor;
@@ -21,71 +28,123 @@ public class RegionLockerAddon
 	private int uniBaseY;
 	private int uniLockedRegions;
 
-	public void initUniforms(int glProgram) {
-		uniUseGray = GL43C.glGetUniformLocation(glProgram, "useGray");
-		uniUseHardBorder = GL43C.glGetUniformLocation(glProgram, "useHardBorder");
-		uniGrayAmount = GL43C.glGetUniformLocation(glProgram, "configGrayAmount");
-		uniGrayColor = GL43C.glGetUniformLocation(glProgram, "configGrayColor");
-		uniBaseX = GL43C.glGetUniformLocation(glProgram, "baseX");
-		uniBaseY = GL43C.glGetUniformLocation(glProgram, "baseY");
-		uniLockedRegions = GL43C.glGetUniformLocation(glProgram, "lockedRegions");
+	public void reset()
+	{
+		isValid = false;
+		glProgram = 0;
 	}
 
-	private boolean instanceRegionUnlocked()
+	public void beforeRender(int glProgram)
 	{
-		if (client.getMapRegions() != null && client.getMapRegions().length > 0 && (client.getGameState() == GameState.LOGGED_IN || client.getGameState() == GameState.LOADING))
+		if (client.getGameState().getState() < GameState.LOADING.getState())
 		{
-			for (int i = 0; i < client.getMapRegions().length; i++)
-			{
-				int region = client.getMapRegions()[i];
-				if (RegionLocker.hasRegion(region)) return true;
-			}
-		}
-		return false;
-	}
-
-	private void initRegionLockerGpu()
-	{
-		int bx, by;
-		bx = client.getBaseX() * 128;
-		by = client.getBaseY() * 128;
-
-		Arrays.fill(loadedLockedRegions, 0);
-
-		if (client.getMapRegions() != null && client.getMapRegions().length > 0 && (client.getGameState() == GameState.LOGGED_IN || client.getGameState() == GameState.LOADING))
-		{
-			for (int i = 0; i < client.getMapRegions().length; i++)
-			{
-				int region = client.getMapRegions()[i];
-
-				if(RegionLocker.invertShader && !RegionLocker.hasRegion(region))
-				{
-					loadedLockedRegions[i] = region;
-				}
-				else if (!RegionLocker.invertShader && RegionLocker.hasRegion(region))
-				{
-					loadedLockedRegions[i] = region;
-				}
-			}
+			return;
 		}
 
-		GL43C.glUniform1i(uniBaseX, bx);
-		GL43C.glUniform1i(uniBaseY, by);
-		GL43C.glUniform1iv(uniLockedRegions, loadedLockedRegions);
+		if (this.glProgram != glProgram)
+		{
+			this.glProgram = glProgram;
+			uniUseGray = glGetUniformLocation(glProgram, "region_locker_useGray");
+			uniUseHardBorder = glGetUniformLocation(glProgram, "region_locker_useHardBorder");
+			uniGrayAmount = glGetUniformLocation(glProgram, "region_locker_configGrayAmount");
+			uniGrayColor = glGetUniformLocation(glProgram, "region_locker_configGrayColor");
+			uniBaseX = glGetUniformLocation(glProgram, "region_locker_baseX");
+			uniBaseY = glGetUniformLocation(glProgram, "region_locker_baseY");
+			uniLockedRegions = glGetUniformLocation(glProgram, "region_locker_lockedRegions");
+			isValid = uniUseGray != -1;
+			checkGLErrors();
+		}
+
+		if (isValid)
+		{
+			updateUniforms();
+		}
+
+		checkGLErrors();
 	}
 
-	public void beforeDrawRegionLockerGpu() {
-		GL43C.glUniform1i(uniUseHardBorder, RegionLocker.hardBorder ? 1 : 0);
-		GL43C.glUniform1f(uniGrayAmount, RegionLocker.grayAmount / 255f);
-		GL43C.glUniform4f(uniGrayColor, RegionLocker.grayColor.getRed() / 255f, RegionLocker.grayColor.getGreen() / 255f, RegionLocker.grayColor.getBlue() / 255f, RegionLocker.grayColor.getAlpha() / 255f);
-		if (!RegionLocker.renderLockedRegions || (client.isInInstancedRegion() && instanceRegionUnlocked()))
+	private void updateUniforms()
+	{
+		var vw = client.getTopLevelWorldView();
+		if (vw == null)
 		{
-			GL43C.glUniform1i(uniUseGray, 0);
+			return;
+		}
+
+		// Get the currently bound program, so we can restore the state later if needed
+		int currentProgram = glGetInteger(GL_CURRENT_PROGRAM);
+		if (currentProgram != glProgram)
+		{
+			glUseProgram(glProgram);
+		}
+
+		glUniform1i(uniUseHardBorder, RegionLocker.hardBorder ? 1 : 0);
+		glUniform1f(uniGrayAmount, RegionLocker.grayAmount / 255f);
+		glUniform4f(uniGrayColor,
+			RegionLocker.grayColor.getRed() / 255f,
+			RegionLocker.grayColor.getGreen() / 255f,
+			RegionLocker.grayColor.getBlue() / 255f,
+			RegionLocker.grayColor.getAlpha() / 255f
+		);
+
+		var mapRegions = vw.getMapRegions();
+
+		boolean isUnlockedInstance = false;
+		if (vw.isInstance())
+		{
+			if (mapRegions != null)
+			{
+				for (int region : mapRegions)
+				{
+					if (RegionLocker.hasRegion(region))
+					{
+						isUnlockedInstance = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!RegionLocker.renderLockedRegions || isUnlockedInstance)
+		{
+			glUniform1i(uniUseGray, 0);
 		}
 		else
 		{
-			GL43C.glUniform1i(uniUseGray, 1);
-			initRegionLockerGpu();
+			glUniform1i(uniUseGray, 1);
+			glUniform1i(uniBaseX, vw.getBaseX() * 128);
+			glUniform1i(uniBaseY, vw.getBaseY() * 128);
+
+			Arrays.fill(loadedLockedRegions, 0);
+			if (mapRegions != null)
+			{
+				for (int i = 0; i < mapRegions.length; i++)
+				{
+					int region = mapRegions[i];
+
+					if (RegionLocker.invertShader && !RegionLocker.hasRegion(region) || !RegionLocker.invertShader && RegionLocker.hasRegion(region))
+					{
+						loadedLockedRegions[i] = region;
+					}
+				}
+			}
+
+			glUniform1iv(uniLockedRegions, loadedLockedRegions);
+		}
+
+		// Restore the previous state
+		if (glProgram != currentProgram)
+		{
+			glUseProgram(currentProgram);
+		}
+	}
+
+	private void checkGLErrors()
+	{
+		int error;
+		while ((error = glGetError()) != GL_NO_ERROR)
+		{
+			log.error("glGetError: {}", error);
 		}
 	}
 }
